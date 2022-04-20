@@ -1,7 +1,6 @@
 <template>
   <div class="q-pa-md">
     <q-table
-      :dense="$q.screen.lt.md"
       title="Users"
       :rows="rows"
       :columns="columns"
@@ -14,7 +13,7 @@
           dense
           debounce="300"
           v-model="filter"
-          placeholder="Pesquisar"
+          placeholder="Search"
         >
           <template v-slot:append>
             <q-icon name="search" />
@@ -27,8 +26,8 @@
 
 <script>
 import { ref } from "vue";
+
 const columns = [
-  { align: "left", name: "id", label: "Codigo", field: "id", sortable: true },
   {
     name: "name",
     required: true,
@@ -40,116 +39,129 @@ const columns = [
   },
   {
     name: "email",
-    align: "left",
+    align: "center",
     label: "Email",
     field: "email",
     sortable: true,
   },
-  { align: "center", name: "action", label: "#", field: "action" },
+  { name: "id", label: "FId", field: "id", sortable: true },
+  { name: "action", label: "#", field: "id" },
 ];
 
 const rows = [
   {
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
     id: 1,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    action: "BtnDt",
   },
   {
-    id: 2,
-    name: "joaquim",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 3,
-    name: "jose",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 4,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 5,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 6,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 7,
-    name: "lorena",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 8,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 9,
-    name: "lidiane",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 10,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 11,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 12,
-    name: "viviane",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 13,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 14,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 15,
-    name: "pedro",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 16,
-    name: "irley",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
   {
-    id: 17,
-    name: "tiago",
-    email: "irley@email.com",
-    action: "btn1 btn2",
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
+  },
+  {
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
+  },
+  {
+    name: "Frozen Yogurt",
+    email: "frozen@email.com",
+    id: 1,
+    action: "BtnDt",
   },
 ];
 
