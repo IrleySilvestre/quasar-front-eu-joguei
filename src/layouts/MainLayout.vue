@@ -41,13 +41,13 @@ const MenuList = [
     title: "Home",
     icon: "home",
     caption: "Pagina Inicial",
-    route: { name: "home" },
+    link: { name: "home" },
   },
   {
     title: "Usuários",
     icon: "person",
     caption: "Gerenciar Usuários",
-    route: { name: "user" },
+    link: { name: "user" },
   },
 ];
 
