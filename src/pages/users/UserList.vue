@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <q-page-container class="q-pa-md">
     <q-table
       :dense="$q.screen.lt.md"
       title="Users"
@@ -10,6 +10,19 @@
       no-data-label="Não ha usuários cadastrados"
       no-results-label="Nenhum registro localizado"
     >
+      <template v-slot:body-cell-action="props">
+        <q-td :props="props">
+          <q-btn
+            color="negative"
+            dense
+            icon-right="delete"
+            @click="removeUser(props.row)"
+          />
+          <div class="my-table-details">
+            {{ props.row.details }}
+          </div>
+        </q-td>
+      </template>
       <template v-slot:top-right>
         <q-input
           borderless
@@ -31,13 +44,13 @@
         </div>
       </template>
     </q-table>
-  </div>
+  </q-page-container>
 </template>
 
 <script>
 import { onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
-import { api } from "src/boot/axios";
+import userServices from "../../services/userServices";
 
 export default {
   setup() {
@@ -51,32 +64,39 @@ export default {
       },
       {
         name: "name",
-        required: true,
         label: "Nome",
+        field: "name",
         align: "left",
-        field: (row) => row.name,
-        format: (val) => `${val}`,
-        sortable: true,
       },
       {
         name: "email",
-        align: "center",
         label: "Email",
         field: "email",
-        sortable: true,
         align: "left",
       },
 
-      { name: "action", label: "#", field: "action", align: "center" },
+      { name: "action", label: "#", field: "action", align: "right" },
     ];
     const users = ref([]);
     const $q = useQuasar();
     $q.screen.setSizes({ sm: 300, md: 500, lg: 1000, xl: 2000 });
 
+    const { listAll, remove } = userServices();
+
     const getUsers = async () => {
       try {
-        const { data } = await api.get("/user/list");
-        users.value = data.res;
+        users.value = await listAll();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const removeUser = async (row) => {
+      try {
+        const form = { id: row.id, name: row.name, email: row.email };
+        await remove(form.id);
+        console.log("msg - sucesso ok apagado");
+        getUsers();
       } catch (error) {
         console.log(error);
       }
@@ -90,6 +110,7 @@ export default {
       filter: ref(""),
       columns,
       users,
+      removeUser,
     };
   },
 };
