@@ -43,6 +43,10 @@
           <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
         </div>
       </template>
+
+      <template v-slot:bottom>
+        <q-btn color="primary" label="Adicionar" :to="{ name: 'userAdd' }" />
+      </template>
     </q-table>
   </q-page-container>
 </template>
@@ -87,7 +91,10 @@ export default {
       try {
         users.value = await listAll();
       } catch (error) {
-        console.log(error);
+        $q.notify({
+          type: "negative",
+          message: "Erro ao consultar",
+        });
       }
     };
 
@@ -95,10 +102,18 @@ export default {
       try {
         const form = { id: row.id, name: row.name, email: row.email };
         await remove(form.id);
-        console.log("msg - sucesso ok apagado");
+        $q.notify({
+          message: "Sucesso",
+          type: "positive",
+          position: "top-right",
+        });
         getUsers();
       } catch (error) {
-        console.log(error);
+        $q.notify({
+          type: "negative",
+          message: "Erro ao excluir",
+          position: "bottom-left",
+        });
       }
     };
 
