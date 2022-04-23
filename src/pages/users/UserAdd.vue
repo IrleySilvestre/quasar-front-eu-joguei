@@ -1,5 +1,6 @@
 <template>
   <q-page-container class="q-pa-md">
+    <TitlePage title="Cadastrar Usuario" />
     <div class="q-pa-md" style="max-width: 480px; background-color: #f6f6f6f6">
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
         <q-input
@@ -42,12 +43,15 @@
 <script>
 import { useQuasar } from "quasar";
 import { ref } from "vue";
+import TitlePage from "src/layouts/TitlePage.vue";
 
 export default {
   name: "UserAdd",
+  components: {
+    TitlePage,
+  },
   setup() {
     const $q = useQuasar();
-
     const name = ref(null);
     const age = ref(null);
     const accept = ref(false);

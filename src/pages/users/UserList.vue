@@ -1,5 +1,6 @@
 <template>
   <q-page-container class="q-pa-md">
+    <TitlePage title="Usuários Cadastrado" />
     <q-table
       :dense="$q.screen.lt.md"
       title="Users"
@@ -24,6 +25,12 @@
         </q-td>
       </template>
       <template v-slot:top-right>
+        <q-btn
+          class="q-mr-lg"
+          color="primary"
+          label="Adicionar"
+          :to="{ name: 'userAdd' }"
+        />
         <q-input
           borderless
           dense
@@ -55,8 +62,11 @@
 import { onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import userServices from "../../services/userServices";
-
+import TitlePage from "src/layouts/TitlePage.vue";
 export default {
+  components: {
+    TitlePage,
+  },
   setup() {
     const columns = [
       {
