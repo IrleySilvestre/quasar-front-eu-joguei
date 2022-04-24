@@ -3,11 +3,12 @@
     <TitlePage title="Usuários Cadastrado" />
     <q-table
       :dense="$q.screen.lt.md"
-      title="Users"
+      title="Usuarios"
       :rows="users"
       :columns="columns"
-      row-key="name"
+      row-key="id"
       :filter="filter"
+      binary-state-sort
       no-data-label="Não ha usuários cadastrados"
       no-results-label="Nenhum registro localizado"
     >
@@ -25,12 +26,6 @@
         </q-td>
       </template>
       <template v-slot:top-right>
-        <q-btn
-          class="q-mr-lg"
-          color="primary"
-          label="Adicionar"
-          :to="{ name: 'userAdd' }"
-        />
         <q-input
           borderless
           dense
@@ -80,12 +75,14 @@ export default {
         name: "name",
         label: "Nome",
         field: "name",
+        sortable: true,
         align: "left",
       },
       {
         name: "email",
         label: "Email",
         field: "email",
+        sortable: true,
         align: "left",
       },
 

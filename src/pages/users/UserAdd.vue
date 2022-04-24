@@ -1,7 +1,7 @@
 <template>
   <q-page-container class="q-pa-md">
     <TitlePage title="Cadastrar Usuario" />
-    <div class="q-pa-md" style="max-width: 480px; background-color: #f6f6f6f6">
+    <div class="q-pa-md q-mt-md shadow-box shadow-2" style="max-width: 480px">
       <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
         <q-input
           filled
