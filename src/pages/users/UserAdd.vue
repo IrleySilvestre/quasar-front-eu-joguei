@@ -1,7 +1,7 @@
 <template>
   <q-page>
+    <TitlePage :title="pageTitle" icon="description" />
     <q-page-container class="q-pa-md">
-      <TitlePage :title="pageTitle" icon="description" />
       <div class="q-pa-md q-mt-md shadow-box shadow-2" style="max-width: 480px">
         <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
           <span class="text-bold" v-if="isEdit">Codigo: {{ id }}</span>
@@ -92,7 +92,7 @@ export default defineComponent({
   },
   setup() {
     const $q = useQuasar();
-    const id = ref(0);
+    const id = ref(null);
     const isEmailValid = ref(true);
     const isConfirmPassword = ref(true);
     const isPwd = ref(true);
@@ -113,10 +113,11 @@ export default defineComponent({
     onMounted(async () => {
       if (route.params.id) {
         pageTitle.value = "Editar Usuario";
+        id.value = route.params.id;
         isEdit.value = true;
         const userEdit = await listById(route.params.id);
-        form.value = userEdit[0];
-        id.value = userEdit[0].id;
+        form.value.name = userEdit[0].name;
+        form.value.email = userEdit[0].email;
       }
     });
 

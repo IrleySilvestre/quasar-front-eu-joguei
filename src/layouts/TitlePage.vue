@@ -1,8 +1,10 @@
 <template>
   <q-page-sticky position="top" expand class="bg-blue-3 text-bold text-black">
     <q-toolbar>
-      <q-icon :name="icon" size="32px" />
-      <q-toolbar-title>{{ title }}</q-toolbar-title>
+      <q-toolbar-title>
+        {{ title
+        }}<span class="q-pl-sm"><q-icon :name="icon" size="32px" /></span
+      ></q-toolbar-title>
     </q-toolbar>
   </q-page-sticky>
 </template>

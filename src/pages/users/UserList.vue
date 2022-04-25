@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
-    <TitlePage title="Usuários Cadastrados" icon="list" />
-    <q-page-container class="q-pa-md">
+    <TitlePage title="Usuários Cadastrados" icon="group" />
+    <q-page-container class="row">
       <q-table
         :rows="users"
         :columns="columns"
@@ -15,6 +15,7 @@
           <q-td :props="props">
             <div class="q-gutter-sm">
               <q-btn
+                size="sm"
                 class="glossy"
                 round
                 color="secondary"
@@ -22,6 +23,7 @@
                 @click="editUser(props.row.id)"
               />
               <q-btn
+                size="sm"
                 class="glossy"
                 round
                 color="negative"
@@ -123,22 +125,39 @@ export default defineComponent({
     };
 
     const removeUser = async (row) => {
-      try {
-        const form = { id: row.id, name: row.name, email: row.email };
-        await remove(form.id);
-        $q.notify({
-          message: "Sucesso",
-          type: "positive",
-          position: "top-right",
+      $q.dialog({
+        title: "Exclusão",
+        message: "Confirma exclusão",
+        cancel: true,
+      })
+        .onOk(async () => {
+          try {
+            const form = { id: row.id, name: row.name, email: row.email };
+            await remove(form.id);
+            $q.notify({
+              message: "Sucesso",
+              type: "positive",
+              position: "top-right",
+            });
+            getUsers();
+          } catch (error) {
+            $q.notify({
+              type: "negative",
+              message: "Erro ao excluir",
+              position: "top-right",
+            });
+          }
+        })
+        .onCancel(() => {
+          $q.notify({
+            message: "Operação Cancelada",
+            type: "positive",
+            position: "top-right",
+          });
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
         });
-        getUsers();
-      } catch (error) {
-        $q.notify({
-          type: "negative",
-          message: "Erro ao excluir",
-          position: "top-right",
-        });
-      }
     };
 
     const editUser = (id) => {
