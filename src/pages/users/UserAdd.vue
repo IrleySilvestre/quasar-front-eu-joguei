@@ -1,95 +1,188 @@
 <template>
-  <q-page-container class="q-pa-md">
-    <TitlePage title="Cadastrar Usuario" />
-    <div class="q-pa-md q-mt-md shadow-box shadow-2" style="max-width: 480px">
-      <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-        <q-input
-          filled
-          v-model="name"
-          label="Your name *"
-          hint="Name and surname"
-          lazy-rules
-          :rules="[(val) => (val && val.length > 0) || 'Please type something']"
-        />
-
-        <q-input
-          filled
-          type="number"
-          v-model="age"
-          label="Your age *"
-          lazy-rules
-          :rules="[
-            (val) => (val !== null && val !== '') || 'Please type your age',
-            (val) => (val > 0 && val < 100) || 'Please type a real age',
-          ]"
-        />
-
-        <q-toggle v-model="accept" label="I accept the license and terms" />
-
-        <div>
-          <q-btn label="Submit" type="submit" color="primary" />
-          <q-btn
-            label="Reset"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
+  <q-page>
+    <q-page-container class="q-pa-md">
+      <TitlePage :title="pageTitle" icon="description" />
+      <div class="q-pa-md q-mt-md shadow-box shadow-2" style="max-width: 480px">
+        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+          <span class="text-bold" v-if="isEdit">Codigo: {{ id }}</span>
+          <q-input
+            outlined
+            v-model="form.name"
+            label="Nome:"
+            lazy-rules
+            :rules="[(val) => (val && val.length > 0) || 'Campo Obrigatório']"
           />
-        </div>
-      </q-form>
-    </div>
-  </q-page-container>
+
+          <q-input
+            outlined
+            v-model="form.email"
+            label="Email:"
+            lazy-rules
+            :rules="[
+              (val) => (val !== null && val !== '') || 'Campo Obrigatório',
+            ]"
+            bottom-slots
+            error-message="Email Inválido"
+            :error="!isEmailValid"
+            @blur="validaEmail"
+          />
+          <q-input
+            v-if="!isEdit"
+            outlined
+            v-model="form.password"
+            label="Senha:"
+            lazy-rules
+            :rules="[
+              (val) => (val !== null && val !== '') || 'Campo Obrigatório',
+              (val) => val.length >= 8 || 'Minimo 8 caracteres',
+            ]"
+            :type="isPwd ? 'password' : 'text'"
+            ><template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+              /> </template
+          ></q-input>
+
+          <q-input
+            v-if="!isEdit"
+            outlined
+            v-model="passwordConfirm"
+            label="Confirmação de senha:"
+            bottom-slots
+            error-message="Confirmação senha diferente"
+            :error="!isConfirmPassword"
+            @blur="validPassword"
+            :type="isPwd2 ? 'password' : 'text'"
+            ><template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd2 = !isPwd2"
+              /> </template
+          ></q-input>
+
+          <div>
+            <q-btn label="Gravar" type="submit" color="primary" />
+            <q-btn
+              label="Limpar"
+              type="reset"
+              color="primary"
+              flat
+              class="q-ml-sm"
+            />
+          </div>
+        </q-form>
+      </div>
+    </q-page-container>
+  </q-page>
 </template>
 <script>
 import { useQuasar } from "quasar";
-import { ref } from "vue";
+import { onMounted, defineComponent, ref, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import userServices from "../../services/userServices";
 import TitlePage from "src/layouts/TitlePage.vue";
 
-export default {
+export default defineComponent({
   name: "UserAdd",
   components: {
     TitlePage,
   },
   setup() {
     const $q = useQuasar();
-    const name = ref(null);
-    const age = ref(null);
-    const accept = ref(false);
+    const id = ref(0);
+    const isEmailValid = ref(true);
+    const isConfirmPassword = ref(true);
+    const isPwd = ref(true);
+    const isPwd2 = ref(true);
+    const { add, listById } = userServices();
+    const passwordConfirm = ref(null);
+    const isEdit = ref(false);
+    const router = useRouter();
+    const route = useRoute();
+    const pageTitle = ref("Cadastrar Usuario");
+
+    const form = ref({
+      name: "",
+      email: "",
+      password: "",
+    });
+
+    onMounted(async () => {
+      if (route.params.id) {
+        pageTitle.value = "Editar Usuario";
+        isEdit.value = true;
+        const userEdit = await listById(route.params.id);
+        form.value = userEdit[0];
+        id.value = userEdit[0].id;
+      }
+    });
+
+    const validaEmail = () => {
+      const { email } = form.value;
+      RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}").test(email)
+        ? (isEmailValid.value = true)
+        : (isEmailValid.value = false);
+    };
+
+    const validPassword = () => {
+      const { password } = form.value;
+      const confirm = passwordConfirm.value;
+
+      password === confirm
+        ? (isConfirmPassword.value = true)
+        : (isConfirmPassword.value = false);
+    };
+
+    const addUser = async () => {
+      try {
+        await add(id.value, form.value);
+        router.push({ name: "user" });
+        $q.notify({
+          type: "positive",
+          message: `Sucesso`,
+          position: "top-right",
+        });
+      } catch (error) {
+        $q.notify({
+          type: "positive",
+          message: `${error}`,
+          position: "top-right",
+        });
+      }
+    };
 
     return {
-      name,
-      age,
-      accept,
+      form,
+      id,
+      passwordConfirm,
+      isEmailValid,
+      isPwd,
+      isPwd2,
+      isConfirmPassword,
+      isEdit,
+      validaEmail,
+      validPassword,
+      addUser,
+      route,
+      router,
+      pageTitle,
 
       onSubmit() {
-        if (accept.value !== true) {
-          $q.notify({
-            color: "red-5",
-            textColor: "white",
-            icon: "warning",
-            message: "You need to accept the license and terms first",
-          });
-        } else {
-          $q.notify({
-            color: "green-4",
-            textColor: "white",
-            icon: "cloud_done",
-            message: "Submitted",
-          });
-        }
+        addUser();
       },
 
       onReset() {
-        name.value = null;
-        age.value = null;
-        accept.value = false;
+        form.value.name = "";
+        form.value.email = "";
+        form.value.password = "";
+        passwordConfirm.value = "";
+        isEmailValid.value = true;
+        isConfirmPassword.value = true;
       },
     };
   },
-};
+});
 </script>
-<style>
-.teste {
-  background-color: #f6f6f6f6;
-}
-</style>

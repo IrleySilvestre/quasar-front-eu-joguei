@@ -10,13 +10,22 @@ export default function useApi(url) {
     }
   };
 
-  const add = async (form) => {
+  const listById = async (id) => {
     try {
-      if (form.id) {
-        const { data } = await api.put(`${url}/${form.id}`, form);
+      const { data } = await api.get(`${url}/${id}`);
+      return data.res;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+  const add = async (id, form) => {
+    try {
+      if (id == 0) {
+        const { data } = await api.post(url, form);
         return data.res;
       } else {
-        const { data } = await api.post(url, form);
+        const { data } = await api.patch(`${url}/${form.id}`, form);
         return data.res;
       }
     } catch (error) {
@@ -36,5 +45,6 @@ export default function useApi(url) {
     listAll,
     add,
     remove,
+    listById,
   };
 }

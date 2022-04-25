@@ -1,64 +1,80 @@
 <template>
-  <q-page-container class="q-pa-md">
-    <TitlePage title="Usuários Cadastrado" />
-    <q-table
-      :dense="$q.screen.lt.md"
-      title="Usuarios"
-      :rows="users"
-      :columns="columns"
-      row-key="id"
-      :filter="filter"
-      binary-state-sort
-      no-data-label="Não ha usuários cadastrados"
-      no-results-label="Nenhum registro localizado"
-    >
-      <template v-slot:body-cell-action="props">
-        <q-td :props="props">
-          <q-btn
-            color="negative"
-            dense
-            icon-right="delete"
-            @click="removeUser(props.row)"
-          />
-          <div class="my-table-details">
-            {{ props.row.details }}
-          </div>
-        </q-td>
-      </template>
-      <template v-slot:top-right>
-        <q-input
-          borderless
-          dense
-          debounce="300"
-          v-model="filter"
-          placeholder="Search"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
-      <template v-slot:no-data="{ icon, message, filter }">
-        <div class="full-width row flex-center text-weight-bold q-gutter-sm">
-          <q-icon size="2em" name="sentiment_dissatisfied" />
-          <span> Opss... {{ message }} </span>
-          <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
-        </div>
-      </template>
+  <q-page padding>
+    <TitlePage title="Usuários Cadastrados" icon="list" />
+    <q-page-container class="q-pa-md">
+      <q-table
+        :rows="users"
+        :columns="columns"
+        row-key="id"
+        :filter="filter"
+        binary-state-sort
+        no-data-label="Não ha usuários cadastrados"
+        no-results-label="Nenhum registro localizado"
+      >
+        <template v-slot:body-cell-action="props">
+          <q-td :props="props">
+            <div class="q-gutter-sm">
+              <q-btn
+                class="glossy"
+                round
+                color="secondary"
+                icon="edit"
+                @click="editUser(props.row.id)"
+              />
+              <q-btn
+                class="glossy"
+                round
+                color="negative"
+                icon="delete"
+                @click="removeUser(props.row)"
+              />
+            </div>
 
-      <template v-slot:bottom>
-        <q-btn color="primary" label="Adicionar" :to="{ name: 'userAdd' }" />
-      </template>
-    </q-table>
-  </q-page-container>
+            <div class="my-table-details">
+              {{ props.row.details }}
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:top>
+          <q-btn
+            color="primary"
+            icon="add_circle"
+            label="Adicionar"
+            :to="{ name: 'userAdd' }"
+          />
+          <q-space />
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Search"
+          >
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+        <template v-slot:no-data="{ icon, message, filter }">
+          <div class="full-width row flex-center text-weight-bold q-gutter-sm">
+            <q-icon size="2em" name="sentiment_dissatisfied" />
+            <span> Opss... {{ message }} </span>
+            <q-icon size="2em" :name="filter ? 'filter_b_and_w' : icon" />
+          </div>
+        </template>
+      </q-table>
+    </q-page-container>
+  </q-page>
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useQuasar } from "quasar";
 import userServices from "../../services/userServices";
 import TitlePage from "src/layouts/TitlePage.vue";
-export default {
+import { useRouter } from "vue-router";
+
+export default defineComponent({
   components: {
     TitlePage,
   },
@@ -88,6 +104,7 @@ export default {
 
       { name: "action", label: "#", field: "action", align: "right" },
     ];
+    const router = useRouter();
     const users = ref([]);
     const $q = useQuasar();
     $q.screen.setSizes({ sm: 300, md: 500, lg: 1000, xl: 2000 });
@@ -119,9 +136,13 @@ export default {
         $q.notify({
           type: "negative",
           message: "Erro ao excluir",
-          position: "bottom-left",
+          position: "top-right",
         });
       }
+    };
+
+    const editUser = (id) => {
+      router.push({ name: "userEdit", params: { id } });
     };
 
     onMounted(() => {
@@ -133,13 +154,9 @@ export default {
       columns,
       users,
       removeUser,
+      editUser,
+      router,
     };
   },
-};
+});
 </script>
-<style>
-.table-user {
-  width: 780px;
-  height: 380px;
-}
-</style>
