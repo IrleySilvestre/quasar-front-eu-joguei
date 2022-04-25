@@ -1,18 +1,22 @@
 <template>
-  <q-layout view="hHh Lpr fff" shadow-2 rounded-borders>
+  <q-layout view="lHh Lpr fff" shadow-2 rounded-borders>
     <q-header elevated>
       <q-toolbar>
-        <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
+        <q-btn
+          flat
+          @click="drawerRight = !drawerRight"
+          round
+          dense
+          icon="menu"
+        />
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-model="drawer"
-      show-if-above
+      v-model="drawerRight"
       :mini="miniState"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
-      mini-to-overlay
       :width="200"
       :breakpoint="500"
       bordered
@@ -60,12 +64,11 @@ export default defineComponent({
   },
 
   setup() {
-    const leftDrawerOpen = ref(false);
+    const drawerRight = ref(false);
 
     return {
-      drawer: ref(false),
       menuLinks: MenuList,
-      leftDrawerOpen,
+      drawerRight,
       miniState: ref(true),
     };
   },

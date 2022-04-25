@@ -3,6 +3,7 @@
     <TitlePage title="Usuários Cadastrados" icon="group" />
     <q-page-container class="row">
       <q-table
+        class="col-xs-12 col-sm-10 col-lg-8"
         :rows="users"
         :columns="columns"
         row-key="id"
@@ -109,7 +110,6 @@ export default defineComponent({
     const router = useRouter();
     const users = ref([]);
     const $q = useQuasar();
-    $q.screen.setSizes({ sm: 300, md: 500, lg: 1000, xl: 2000 });
 
     const { listAll, remove } = userServices();
 

@@ -72,6 +72,13 @@
               flat
               class="q-ml-sm"
             />
+
+            <q-btn
+              label="Cancelar"
+              color="secondary"
+              class="q-ml-sm float-right"
+              :to="{ name: 'user' }"
+            />
           </div>
         </q-form>
       </div>
