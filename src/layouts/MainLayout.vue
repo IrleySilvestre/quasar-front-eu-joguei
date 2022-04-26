@@ -45,7 +45,7 @@ const MenuList = [
     title: "Home",
     icon: "home",
     caption: "Pagina Inicial",
-    link: { name: "home" },
+    link: { name: "dashboard" },
   },
   {
     title: "Usuários",
