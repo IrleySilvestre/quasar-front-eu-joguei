@@ -1,5 +1,5 @@
 <template>
-  <q-page-sticky position="top" expand class="bg-blue-3 text-bold text-black">
+  <q-page-sticky position="top" expand class="bg-teal-4 text-bold text-teal-1">
     <q-toolbar>
       <q-toolbar-title>
         {{ title

@@ -1,8 +1,9 @@
 <template>
   <q-layout view="lHh Lpr fff" shadow-2 rounded-borders>
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="bg-secondary">
         <q-btn
+          v-if="!drawerRight"
           flat
           @click="drawerRight = !drawerRight"
           round
@@ -20,9 +21,15 @@
       :width="200"
       :breakpoint="500"
       bordered
-      class="bg-grey-3"
+      class="bg-secondary text-teal-1 text-bold"
     >
       <q-list>
+        <q-item clickable @click="drawerRight = !drawerRight" exact>
+          <q-item-section avatar>
+            <q-icon name="menu" />
+          </q-item-section>
+        </q-item>
+        <q-separator />
         <MainMenu v-for="link in menuLinks" :key="link.title" v-bind="link" />
       </q-list>
     </q-drawer>
@@ -53,6 +60,12 @@ const MenuList = [
     caption: "Gerenciar Usuários",
     link: { name: "user" },
   },
+  {
+    title: "Sair",
+    icon: "logout",
+    caption: "",
+    link: { name: "signin" },
+  },
 ];
 
 export default defineComponent({
@@ -64,7 +77,7 @@ export default defineComponent({
   },
 
   setup() {
-    const drawerRight = ref(false);
+    const drawerRight = ref(true);
 
     return {
       menuLinks: MenuList,

@@ -1,6 +1,6 @@
 <template>
   <q-footer reveal class="text-white">
-    <q-toolbar>
+    <q-toolbar class="bg-secondary">
       <q-toolbar-title class="text-right q-mr-lg text-bold">
         <div>
           <span> {{ new Date().getFullYear() }}</span> - Eu Joguei

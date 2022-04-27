@@ -40,7 +40,7 @@
         </template>
         <template v-slot:top>
           <q-btn
-            color="primary"
+            color="secondary"
             icon="add_circle"
             label="Adicionar"
             :to="{ name: 'userAdd' }"

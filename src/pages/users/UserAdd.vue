@@ -63,21 +63,22 @@
               /> </template
           ></q-input>
 
-          <div>
-            <q-btn label="Gravar" type="submit" color="primary" />
-            <q-btn
-              label="Limpar"
-              type="reset"
-              color="primary"
-              flat
-              class="q-ml-sm"
-            />
+          <div class="row justify-around">
+            <q-btn label="Gravar" type="submit" color="secondary" />
 
             <q-btn
               label="Cancelar"
+              outline
               color="secondary"
               class="q-ml-sm float-right"
               :to="{ name: 'user' }"
+            />
+            <q-btn
+              label="Limpar"
+              type="reset"
+              color="secondary"
+              flat
+              class="q-ml-sm"
             />
           </div>
         </q-form>
