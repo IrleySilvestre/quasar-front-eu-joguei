@@ -109,6 +109,7 @@ export default defineComponent({
   name: "LoginPage",
   setup() {
     const $q = useQuasar();
+    const id = ref(null);
     const isEmailValid = ref(true);
     const isConfirmPassword = ref(true);
     const isPwd = ref(true);
@@ -161,6 +162,7 @@ export default defineComponent({
 
     return {
       form,
+      id,
       passwordConfirm,
       isEmailValid,
       isPwd,

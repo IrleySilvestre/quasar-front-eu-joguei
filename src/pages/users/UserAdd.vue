@@ -53,7 +53,7 @@
             bottom-slots
             error-message="Confirmação senha diferente"
             :error="!isConfirmPassword"
-            @blur="validPassword"
+            @blur="validatePassword"
             :type="isPwd2 ? 'password' : 'text'"
             ><template v-slot:append>
               <q-icon
@@ -64,7 +64,12 @@
           ></q-input>
 
           <div class="row justify-around">
-            <q-btn label="Gravar" type="submit" color="secondary" />
+            <q-btn
+              :disable="!enableBtn"
+              label="Gravar"
+              type="submit"
+              color="secondary"
+            />
 
             <q-btn
               label="Cancelar"
@@ -135,14 +140,12 @@ export default defineComponent({
         ? (isEmailValid.value = true)
         : (isEmailValid.value = false);
     };
-
-    const validPassword = () => {
-      const { password } = form.value;
-      const confirm = passwordConfirm.value;
-
-      password === confirm
-        ? (isConfirmPassword.value = true)
-        : (isConfirmPassword.value = false);
+    const validatePassword = () => {
+      if (form.value.password === passwordConfirm.value) {
+        isConfirmPassword.value = true;
+      } else {
+        isConfirmPassword.value = false;
+      }
     };
 
     const addUser = async () => {
@@ -156,7 +159,7 @@ export default defineComponent({
         });
       } catch (error) {
         $q.notify({
-          type: "positive",
+          type: "negative",
           message: `${error}`,
           position: "top-right",
         });
@@ -170,14 +173,25 @@ export default defineComponent({
       isEmailValid,
       isPwd,
       isPwd2,
-      isConfirmPassword,
       isEdit,
       validaEmail,
-      validPassword,
+      validatePassword,
       addUser,
       route,
       router,
       pageTitle,
+      isConfirmPassword,
+
+      enableBtn: computed(() => {
+        if (passwordConfirm.value == "") {
+          return true;
+        } else {
+          if (passwordConfirm.value == form.value.password) {
+            return true;
+          }
+          return false;
+        }
+      }),
 
       onSubmit() {
         addUser();
