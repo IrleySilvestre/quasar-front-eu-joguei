@@ -31,6 +31,17 @@
         </q-item>
         <q-separator />
         <MainMenu v-for="link in menuLinks" :key="link.title" v-bind="link" />
+        <q-separator />
+
+        <q-item clickable :to="{ name: 'signin' }" exact>
+          <q-item-section avatar>
+            <q-icon name="logout" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Sair</q-item-label>
+            <q-item-label caption>Encerrar</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -61,10 +72,10 @@ const MenuList = [
     link: { name: "user" },
   },
   {
-    title: "Sair",
-    icon: "logout",
-    caption: "",
-    link: { name: "signin" },
+    title: "Segurança",
+    icon: "admin_panel_settings",
+    caption: "Controle de Acesso",
+    link: { name: "admPage" },
   },
 ];
 

@@ -47,6 +47,11 @@ const routes = [
         name: "userEdit",
         component: () => import("src/pages/users/UserAdd.vue"),
       },
+      {
+        path: "edmin-page/",
+        name: "admPage",
+        component: () => import("src/layouts/AdmLayout.vue"),
+      },
     ],
   },
 
