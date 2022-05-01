@@ -1,12 +1,12 @@
 import roleApi from "src/composebles/RoleApi";
 
 export default function roleServices() {
-  const { listAll, add, remove, listById } = roleApi("role");
+  const { listAll, add, remove, findById } = roleApi("role");
 
   return {
     listAll,
     add,
     remove,
-    listById,
+    findById,
   };
 }

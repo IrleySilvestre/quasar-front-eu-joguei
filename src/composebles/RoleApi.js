@@ -10,7 +10,7 @@ export default function useApi(url) {
     }
   };
 
-  const listById = async (id) => {
+  const findById = async (id) => {
     try {
       const { data } = await api.get(`${url}/${id}`);
       return data.res;
@@ -46,6 +46,6 @@ export default function useApi(url) {
     listAll,
     add,
     remove,
-    listById,
+    findById,
   };
 }

@@ -18,7 +18,7 @@
       :mini="miniState"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
-      :width="200"
+      :width="230"
       :breakpoint="500"
       bordered
       class="bg-secondary text-teal-1 text-bold"
@@ -64,12 +64,6 @@ const MenuList = [
     icon: "home",
     caption: "Pagina Inicial",
     link: { name: "dashboard" },
-  },
-  {
-    title: "Usuários",
-    icon: "person",
-    caption: "Gerenciar Usuários",
-    link: { name: "user" },
   },
   {
     title: "Segurança",

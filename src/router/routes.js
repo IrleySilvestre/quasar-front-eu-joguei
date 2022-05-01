@@ -33,11 +33,6 @@ const routes = [
         component: () => import("pages/DashboardPage.vue"),
       },
       {
-        path: "list-users",
-        name: "user",
-        component: () => import("src/pages/users/UserPage.vue"),
-      },
-      {
         path: "add-user/",
         name: "userAdd",
         component: () => import("src/pages/users/UserAdd.vue"),
@@ -48,9 +43,24 @@ const routes = [
         component: () => import("src/pages/users/UserAdd.vue"),
       },
       {
-        path: "edmin-page/",
+        path: "edmin-page/:tabActive?",
         name: "admPage",
-        component: () => import("src/layouts/AdmLayout.vue"),
+        component: () => import("src/pages/admin/AdmPage.vue"),
+      },
+      {
+        path: "role-add",
+        name: "roleAdd",
+        component: () => import("src/pages/roles/RoleAdd.vue"),
+      },
+      {
+        path: "role-detail/:id",
+        name: "roleDetail",
+        component: () => import("src/pages/roles/RoleDetail.vue"),
+      },
+      {
+        path: "role-edit/:id",
+        name: "roleEdit",
+        component: () => import("src/pages/roles/RoleAdd.vue"),
       },
     ],
   },

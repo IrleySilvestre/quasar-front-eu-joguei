@@ -14,7 +14,7 @@
           color="secondary"
           icon="add_circle"
           label="Adicionar"
-          :to="{ name: 'userAdd' }"
+          :to="{ name: 'roleAdd' }"
         />
         <q-space />
         <q-input
@@ -59,7 +59,7 @@
               round
               color="info"
               icon="loupe"
-              @click="detailRole(props.row)"
+              @click="detailRole(props.row.id)"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const $q = useQuasar();
-    const { listAll, remove, listById } = roleServices();
+    const { listAll, remove } = roleServices();
     const roles = ref([]);
 
     const columns = [
@@ -121,15 +121,9 @@ export default defineComponent({
       }
     };
 
-    const detailRole = async (row) => {
+    const detailRole = async (id) => {
       try {
-        const form = {
-          id: row.id,
-          name: row.name,
-          description: row.description,
-        };
-        roles.value = await listById(form.id);
-        console.log("detalhar", form);
+        router.push({ name: "roleDetail", params: { id } });
       } catch (error) {
         $q.notify({
           type: "negative",
@@ -139,8 +133,7 @@ export default defineComponent({
     };
 
     const editRole = (id) => {
-      console.log("editando", id);
-      // router.push({ name: "userEdit", params: { id } });
+      router.push({ name: "roleEdit", params: { id } });
     };
 
     const removeRole = async (row) => {

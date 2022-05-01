@@ -76,7 +76,7 @@
               outline
               color="secondary"
               class="q-ml-sm float-right"
-              :to="{ name: 'user' }"
+              :to="{ name: 'admPage' }"
             />
             <q-btn
               label="Limpar"
@@ -151,7 +151,7 @@ export default defineComponent({
     const addUser = async () => {
       try {
         await add(id.value, form.value);
-        router.push({ name: "user" });
+        router.push({ name: "admPage" });
         $q.notify({
           type: "positive",
           message: `Sucesso`,
