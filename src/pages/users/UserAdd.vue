@@ -183,13 +183,17 @@ export default defineComponent({
       isConfirmPassword,
 
       enableBtn: computed(() => {
-        if (passwordConfirm.value == "") {
+        if (isEdit.value == true) {
           return true;
         } else {
-          if (passwordConfirm.value == form.value.password) {
+          if (passwordConfirm.value == "") {
             return true;
+          } else {
+            if (passwordConfirm.value == form.value.password) {
+              return true;
+            }
+            return false;
           }
-          return false;
         }
       }),
 
