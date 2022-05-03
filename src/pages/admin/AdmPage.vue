@@ -4,7 +4,7 @@
       title="Controle de Acesso"
       icon="fa-solid fa-screwdriver-wrench"
     />
-    <q-page-container>
+    <q-page-container class="q-pa-md">
       <div>
         <q-tabs
           no-caps
@@ -34,7 +34,7 @@
             <UserList />
           </q-tab-panel>
           <q-tab-panel name="permissions">
-            <h1>Permissoes</h1>
+            <RoleDetail />
           </q-tab-panel>
 
           <q-tab-panel name="roles">
@@ -51,11 +51,12 @@ import { ref, onMounted } from "vue";
 import UserList from "src/pages/users/UserList.vue";
 import RoleList from "src/pages/roles/RoleList.vue";
 import TitlePage from "src/layouts/TitlePage.vue";
+import RoleDetail from "../roles/RoleDetail.vue";
 import { useRoute } from "vue-router";
 
 export default {
   name: "AdmPage",
-  components: { UserList, RoleList, TitlePage },
+  components: { UserList, RoleList, TitlePage, RoleDetail, RoleDetail },
 
   setup() {
     const route = useRoute();

@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page padding>
     <TitlePage :title="pageTitle" icon="description" />
     <q-page-container class="q-pa-md">
       <div class="q-pa-md q-mt-md shadow-box shadow-2" style="max-width: 480px">

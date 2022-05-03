@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page padding>
     <TitlePage :title="pageTitle" icon="description" />
     <q-page-container class="row">
       <q-form
