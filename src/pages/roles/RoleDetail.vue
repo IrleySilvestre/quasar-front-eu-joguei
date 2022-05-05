@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { list } from "postcss";
 import { useQuasar } from "quasar";
 import { onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
@@ -72,51 +71,61 @@ export default {
         });
       }
     };
+    const groupBy = (array, prop) => {
+      var value = array.reduce(function (total, item) {
+        var key = item[prop];
+        total[key] = (total[key] || []).concat(item);
+        return total;
+      }, {});
+      return value;
+    };
 
     onMounted(async () => {
       getRolesPermissions();
       const lista = await listRolesPermissions();
-      let newList = [];
-      let funcionalidade = {
-        nome: "",
-        acoes: [
-          {
-            nome: "",
-            permissao: "",
-          },
-        ],
-      };
+      console.log(lista);
 
-      lista.map((item, i, array) => {
-        if (newList.length == 0) {
-          funcionalidade.nome = item.funcionalidade;
-          if (item.permissao == 1) {
-            funcionalidade.acoes.push({ nome: item.acao, permissao: true });
-          } else {
-            funcionalidade.acoes.push({ nome: item.acao, permissao: false });
-          }
-          newList.push(funcionalidade);
-        } else {
-          if (funcionalidade.nome == item.funcionalidade) {
-            if (item.permissao == 1) {
-              funcionalidade.acoes.push({ nome: item.acao, permissao: true });
-            } else {
-              funcionalidade.acoes.push({ nome: item.acao, permissao: false });
-            }
-          }
-        }
-        if (funcionalidade.nome != item.funcionalidade) {
-          funcionalidade.nome = item.funcionalidade;
-          if (item.permissao == 1) {
-            funcionalidade.acoes.push({ nome: item.acao, permissao: true });
-          } else {
-            funcionalidade.acoes.push({ nome: item.acao, permissao: false });
-          }
-          newList.push(funcionalidade);
-        }
-        console.log(array[i]);
-      });
-      console.log(newList);
+      let agrupados = groupBy(lista, "funcionalidade");
+      console.log(agrupados);
+      // let newList = [];
+      // let funcionalidade = {
+      //   nome: "",
+      //   acoes: [
+      //     {
+      //       nome: "",
+      //       permissao: "",
+      //     },
+      //   ],
+      // };
+
+      // lista.map((item, i, array) => {
+      //   if (newList.length == 0) {
+      //     funcionalidade.nome = item.funcionalidade;
+      //     if (item.permissao == 1) {
+      //       funcionalidade.acoes.push({ nome: item.acao, permissao: true });
+      //     } else {
+      //       funcionalidade.acoes.push({ nome: item.acao, permissao: false });
+      //     }
+      //     newList.push(funcionalidade);
+      //   } else {
+      //     if (funcionalidade.nome == item.funcionalidade) {
+      //       if (item.permissao == 1) {
+      //         funcionalidade.acoes.push({ nome: item.acao, permissao: true });
+      //       } else {
+      //         funcionalidade.acoes.push({ nome: item.acao, permissao: false });
+      //       }
+      //     }
+      //   }
+      //   if (funcionalidade.nome != item.funcionalidade) {
+      //     funcionalidade.nome = item.funcionalidade;
+      //     if (item.permissao == 1) {
+      //       funcionalidade.acoes.push({ nome: item.acao, permissao: true });
+      //     } else {
+      //       funcionalidade.acoes.push({ nome: item.acao, permissao: false });
+      //     }
+      //     newList.push(funcionalidade);
+      //   }
+      // });
 
       functionality.value = [
         {
@@ -167,7 +176,7 @@ export default {
       rolesPermissions,
 
       getRolesPermissions,
-
+      groupBy,
       filterFn(val, update, abort) {
         update(() => {
           const needle = val.toLowerCase();
