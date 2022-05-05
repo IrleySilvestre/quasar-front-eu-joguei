@@ -42,10 +42,20 @@ export default function useApi(url) {
     }
   };
 
+  const listRolesPermissions = async () => {
+    try {
+      const { data } = await api.get(`${url}/permissions`);
+      return data.res;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
   return {
     listAll,
     add,
     remove,
     findById,
+    listRolesPermissions,
   };
 }

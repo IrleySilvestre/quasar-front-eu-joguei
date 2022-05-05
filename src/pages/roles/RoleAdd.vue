@@ -1,7 +1,7 @@
 <template>
+  <TitlePage :title="pageTitle" icon="description" />
   <q-page padding>
-    <TitlePage :title="pageTitle" icon="description" />
-    <q-page-container class="row">
+    <div class="q-pa-md q-mt-xl shadow-2 row">
       <q-form
         class="shadow-2 q-pa-sm col-md-4 col-sm-12"
         @submit.prevent="onSubmit"
@@ -47,7 +47,7 @@
           />
         </div>
       </q-form>
-    </q-page-container>
+    </div>
   </q-page>
 </template>
 <script>

@@ -116,7 +116,7 @@ export default defineComponent({
       } catch (error) {
         $q.notify({
           type: "negative",
-          message: "Erro ao consultar",
+          message: `Erro ao consultar:${error}`,
         });
       }
     };

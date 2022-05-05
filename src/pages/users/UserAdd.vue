@@ -1,94 +1,92 @@
 <template>
+  <TitlePage :title="pageTitle" icon="description" />
   <q-page padding>
-    <TitlePage :title="pageTitle" icon="description" />
-    <q-page-container class="q-pa-md">
-      <div class="q-pa-md q-mt-md shadow-box shadow-2" style="max-width: 480px">
-        <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-          <span class="text-bold" v-if="isEdit">Codigo: {{ id }}</span>
-          <q-input
-            outlined
-            v-model="form.name"
-            label="Nome:"
-            lazy-rules
-            :rules="[(val) => (val && val.length > 0) || 'Campo Obrigatório']"
+    <div class="q-pa-md q-mt-xl shadow-2" style="max-width: 480px">
+      <q-form @submit="onSubmit" @reset="onReset">
+        <span class="text-bold" v-if="isEdit">Codigo: {{ id }}</span>
+        <q-input
+          outlined
+          v-model="form.name"
+          label="Nome:"
+          lazy-rules
+          :rules="[(val) => (val && val.length > 0) || 'Campo Obrigatório']"
+        />
+
+        <q-input
+          outlined
+          v-model="form.email"
+          label="Email:"
+          lazy-rules
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Campo Obrigatório',
+          ]"
+          bottom-slots
+          error-message="Email Inválido"
+          :error="!isEmailValid"
+          @blur="validaEmail"
+        />
+        <q-input
+          v-if="!isEdit"
+          outlined
+          v-model="form.password"
+          label="Senha:"
+          lazy-rules
+          :rules="[
+            (val) => (val !== null && val !== '') || 'Campo Obrigatório',
+            (val) => val.length >= 8 || 'Minimo 8 caracteres',
+          ]"
+          :type="isPwd ? 'password' : 'text'"
+          ><template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            /> </template
+        ></q-input>
+
+        <q-input
+          v-if="!isEdit"
+          outlined
+          v-model="passwordConfirm"
+          label="Confirmação de senha:"
+          bottom-slots
+          error-message="Confirmação senha diferente"
+          :error="!isConfirmPassword"
+          @blur="validatePassword"
+          :type="isPwd2 ? 'password' : 'text'"
+          ><template v-slot:append>
+            <q-icon
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd2 = !isPwd2"
+            /> </template
+        ></q-input>
+
+        <div class="row justify-around">
+          <q-btn
+            :disable="!enableBtn"
+            label="Gravar"
+            type="submit"
+            color="secondary"
           />
 
-          <q-input
-            outlined
-            v-model="form.email"
-            label="Email:"
-            lazy-rules
-            :rules="[
-              (val) => (val !== null && val !== '') || 'Campo Obrigatório',
-            ]"
-            bottom-slots
-            error-message="Email Inválido"
-            :error="!isEmailValid"
-            @blur="validaEmail"
+          <q-btn
+            label="Cancelar"
+            outline
+            color="secondary"
+            class="q-ml-sm float-right"
+            :to="{ name: 'admPage' }"
           />
-          <q-input
-            v-if="!isEdit"
-            outlined
-            v-model="form.password"
-            label="Senha:"
-            lazy-rules
-            :rules="[
-              (val) => (val !== null && val !== '') || 'Campo Obrigatório',
-              (val) => val.length >= 8 || 'Minimo 8 caracteres',
-            ]"
-            :type="isPwd ? 'password' : 'text'"
-            ><template v-slot:append>
-              <q-icon
-                :name="isPwd ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwd = !isPwd"
-              /> </template
-          ></q-input>
-
-          <q-input
-            v-if="!isEdit"
-            outlined
-            v-model="passwordConfirm"
-            label="Confirmação de senha:"
-            bottom-slots
-            error-message="Confirmação senha diferente"
-            :error="!isConfirmPassword"
-            @blur="validatePassword"
-            :type="isPwd2 ? 'password' : 'text'"
-            ><template v-slot:append>
-              <q-icon
-                :name="isPwd ? 'visibility_off' : 'visibility'"
-                class="cursor-pointer"
-                @click="isPwd2 = !isPwd2"
-              /> </template
-          ></q-input>
-
-          <div class="row justify-around">
-            <q-btn
-              :disable="!enableBtn"
-              label="Gravar"
-              type="submit"
-              color="secondary"
-            />
-
-            <q-btn
-              label="Cancelar"
-              outline
-              color="secondary"
-              class="q-ml-sm float-right"
-              :to="{ name: 'admPage' }"
-            />
-            <q-btn
-              label="Limpar"
-              type="reset"
-              color="secondary"
-              flat
-              class="q-ml-sm"
-            />
-          </div>
-        </q-form>
-      </div>
-    </q-page-container>
+          <q-btn
+            label="Limpar"
+            type="reset"
+            color="secondary"
+            flat
+            class="q-ml-sm"
+          />
+        </div>
+      </q-form>
+    </div>
   </q-page>
 </template>
 <script>
