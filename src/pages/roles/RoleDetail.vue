@@ -16,7 +16,7 @@
       >
         <template v-slot:no-option>
           <q-item>
-            <q-item-section class="text-grey"> Sem resultado</q-item-section>
+            <q-item-section class="text-grey">Sem resultado</q-item-section>
           </q-item>
         </template>
       </q-select>
@@ -54,7 +54,7 @@ export default {
   name: "RoleDetail",
   setup() {
     const $q = useQuasar();
-    const options = ref("null");
+    const options = ref([]);
     const roles = ref(["Administrador", "Vendas", "Master", "Gerente Vendas"]);
     const functionality = ref([]);
     const rolesPermissions = ref([]);
@@ -71,61 +71,29 @@ export default {
         });
       }
     };
-    const groupBy = (array, prop) => {
-      var value = array.reduce(function (total, item) {
-        var key = item[prop];
-        total[key] = (total[key] || []).concat(item);
-        return total;
+
+    const agruparFuncionalidade = (objtoArray, prop) => {
+      return objtoArray.reduce((acc, obj) => {
+        let key = obj[prop];
+        if (!acc[key]) {
+          acc[key] = [];
+        }
+        acc[key].push(obj);
+        return acc;
       }, {});
-      return value;
     };
 
     onMounted(async () => {
       getRolesPermissions();
       const lista = await listRolesPermissions();
-      console.log(lista);
 
-      let agrupados = groupBy(lista, "funcionalidade");
-      console.log(agrupados);
-      // let newList = [];
-      // let funcionalidade = {
-      //   nome: "",
-      //   acoes: [
-      //     {
-      //       nome: "",
-      //       permissao: "",
-      //     },
-      //   ],
-      // };
+      let groupRolePermission = agruparFuncionalidade(lista, "funcionalidade");
 
-      // lista.map((item, i, array) => {
-      //   if (newList.length == 0) {
-      //     funcionalidade.nome = item.funcionalidade;
-      //     if (item.permissao == 1) {
-      //       funcionalidade.acoes.push({ nome: item.acao, permissao: true });
-      //     } else {
-      //       funcionalidade.acoes.push({ nome: item.acao, permissao: false });
-      //     }
-      //     newList.push(funcionalidade);
-      //   } else {
-      //     if (funcionalidade.nome == item.funcionalidade) {
-      //       if (item.permissao == 1) {
-      //         funcionalidade.acoes.push({ nome: item.acao, permissao: true });
-      //       } else {
-      //         funcionalidade.acoes.push({ nome: item.acao, permissao: false });
-      //       }
-      //     }
-      //   }
-      //   if (funcionalidade.nome != item.funcionalidade) {
-      //     funcionalidade.nome = item.funcionalidade;
-      //     if (item.permissao == 1) {
-      //       funcionalidade.acoes.push({ nome: item.acao, permissao: true });
-      //     } else {
-      //       funcionalidade.acoes.push({ nome: item.acao, permissao: false });
-      //     }
-      //     newList.push(funcionalidade);
-      //   }
-      // });
+      for (let i in groupRolePermission) {
+        console.log(Object.keys(groupRolePermission));
+      }
+
+      console.log(groupRolePermission);
 
       functionality.value = [
         {
@@ -172,11 +140,12 @@ export default {
       check2: ref(false),
       check3: ref(false),
       functionality,
-      listRolesPermissions,
       rolesPermissions,
 
+      agruparFuncionalidade,
+      listRolesPermissions,
       getRolesPermissions,
-      groupBy,
+
       filterFn(val, update, abort) {
         update(() => {
           const needle = val.toLowerCase();
