@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { list } from "postcss";
 import { useQuasar } from "quasar";
 import { onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
@@ -86,44 +87,55 @@ export default {
     onMounted(async () => {
       getRolesPermissions();
       const lista = await listRolesPermissions();
+      let novaLista = [];
 
-      let groupRolePermission = agruparFuncionalidade(lista, "funcionalidade");
+      let func = agruparFuncionalidade(lista, "funcionalidade");
 
-      for (let i in groupRolePermission) {
-        console.log(Object.keys(groupRolePermission));
+      for (const key in func) {
+        if (Object.hasOwnProperty.call(func, key)) {
+          let item = { label: key, children: [] };
+          let children = [{}];
+          const element = func[key];
+          element.forEach((el, i) => {
+            children[i] = { label: el.acao, permissao: el.permissao };
+            item.children.push(children);
+            // console.log(children);
+          });
+          novaLista.push(item);
+        }
       }
+      console.log(novaLista);
 
-      console.log(groupRolePermission);
-
-      functionality.value = [
-        {
-          label: "1 Gerenciar Usuários",
-          children: [
-            { label: "1.1 Listar" },
-            { label: "1.2 Adicionar" },
-            { label: "1.3 Editar" },
-            { label: "1.4 Excluir" },
-          ],
-        },
-        {
-          label: "2 Gerenciar Grupos de Acesso",
-          children: [
-            { label: "2.1 Listar" },
-            { label: "2.2 Adicionar" },
-            { label: "2.3 Editar" },
-            { label: "2.4 Excluir" },
-          ],
-        },
-        {
-          label: "3 Gerenciar Permissões",
-          children: [
-            { label: "3.1 Listar" },
-            { label: "3.2 Adicionar" },
-            { label: "3.3 Editar" },
-            { label: "3.4 Excluir" },
-          ],
-        },
-      ];
+      functionality.value = novaLista;
+      // [
+      //   {
+      //     label: "1 Gerenciar Usuários",
+      //     children: [
+      //       { label: "1.1 Listar" },
+      //       { label: "1.2 Adicionar" },
+      //       { label: "1.3 Editar" },
+      //       { label: "1.4 Excluir" },
+      //     ],
+      //   },
+      //   {
+      //     label: "2 Gerenciar Grupos de Acesso",
+      //     children: [
+      //       { label: "2.1 Listar" },
+      //       { label: "2.2 Adicionar" },
+      //       { label: "2.3 Editar" },
+      //       { label: "2.4 Excluir" },
+      //     ],
+      //   },
+      //   {
+      //     label: "3 Gerenciar Permissões",
+      //     children: [
+      //       { label: "3.1 Listar" },
+      //       { label: "3.2 Adicionar" },
+      //       { label: "3.3 Editar" },
+      //       { label: "3.4 Excluir" },
+      //     ],
+      //   },
+      // ];
     });
 
     return {
