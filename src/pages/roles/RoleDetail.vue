@@ -29,8 +29,8 @@
         v-model:ticked="ticked"
         v-model:expanded="expanded"
         node-key="label"
-        tick-strategy="leaf-filtered"
-        default-expand-all
+        tick-strategy="leaf"
+        @update:ticked="seleciona"
       />
     </div>
 
@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { list } from "postcss";
 import { useQuasar } from "quasar";
 import { onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
@@ -56,12 +55,26 @@ export default {
   setup() {
     const $q = useQuasar();
     const options = ref([]);
-    const roles = ref(["Administrador", "Vendas", "Master", "Gerente Vendas"]);
+    const roles = ref([]);
     const functionality = ref([]);
     const rolesPermissions = ref([]);
 
-    const { listRolesPermissions } = roleServices();
+    const { listRolesPermissions, listAll } = roleServices();
 
+    const getRoles = async () => {
+      try {
+        const listRoles = await listAll();
+        listRoles.forEach((element, i) => {
+          console.log(element);
+          roles.value.push(element.name);
+        });
+      } catch (error) {
+        $q.notify({
+          type: "negative",
+          message: `Erro: ${error}`,
+        });
+      }
+    };
     const getRolesPermissions = async () => {
       try {
         rolesPermissions.value = await listRolesPermissions();
@@ -85,65 +98,39 @@ export default {
     };
 
     onMounted(async () => {
+      getRoles();
+      const listRoles = await listAll();
       getRolesPermissions();
       const lista = await listRolesPermissions();
       let novaLista = [];
+      let numList = 0;
 
       let func = agruparFuncionalidade(lista, "funcionalidade");
 
       for (const key in func) {
+        numList = numList + 1;
         if (Object.hasOwnProperty.call(func, key)) {
-          let item = { label: key, children: [] };
-          let children = [{}];
+          let nameLabel = numList + " " + key;
+
+          let item = { label: nameLabel, children: [] };
           const element = func[key];
           element.forEach((el, i) => {
-            children[i] = { label: el.acao, permissao: el.permissao };
-            item.children.push(children);
-            // console.log(children);
+            let nameChildren = numList + "." + (i + 1) + " " + el.acao;
+            item.children[i] = { label: nameChildren, permissao: el.permissao };
           });
           novaLista.push(item);
         }
       }
-      console.log(novaLista);
 
       functionality.value = novaLista;
-      // [
-      //   {
-      //     label: "1 Gerenciar Usuários",
-      //     children: [
-      //       { label: "1.1 Listar" },
-      //       { label: "1.2 Adicionar" },
-      //       { label: "1.3 Editar" },
-      //       { label: "1.4 Excluir" },
-      //     ],
-      //   },
-      //   {
-      //     label: "2 Gerenciar Grupos de Acesso",
-      //     children: [
-      //       { label: "2.1 Listar" },
-      //       { label: "2.2 Adicionar" },
-      //       { label: "2.3 Editar" },
-      //       { label: "2.4 Excluir" },
-      //     ],
-      //   },
-      //   {
-      //     label: "3 Gerenciar Permissões",
-      //     children: [
-      //       { label: "3.1 Listar" },
-      //       { label: "3.2 Adicionar" },
-      //       { label: "3.3 Editar" },
-      //       { label: "3.4 Excluir" },
-      //     ],
-      //   },
-      // ];
     });
 
     return {
       model: ref(null),
       roles,
       options,
-      ticked: ref(["Pleasant surroundings"]),
-      expanded: ref(["Good service (disabled node)"]),
+      ticked: ref(null),
+      expanded: ref(null),
       teal: ref(true),
       orange: ref(false),
       red: ref(true),
@@ -153,10 +140,16 @@ export default {
       check3: ref(false),
       functionality,
       rolesPermissions,
+      listAll,
 
       agruparFuncionalidade,
       listRolesPermissions,
       getRolesPermissions,
+      getRoles,
+
+      seleciona(target) {
+        console.log(target);
+      },
 
       filterFn(val, update, abort) {
         update(() => {
