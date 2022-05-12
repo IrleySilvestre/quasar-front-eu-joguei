@@ -49,6 +49,7 @@
 import { useQuasar } from "quasar";
 import { onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
+import userServices from "../../services/userServices";
 
 export default {
   name: "RoleDetail",
@@ -56,16 +57,32 @@ export default {
     const $q = useQuasar();
     const options = ref([]);
     const roles = ref([]);
+    const dbRoles = ref(null);
     const functionality = ref([]);
     const rolesPermissions = ref([]);
 
     const { listRolesPermissions, listAll } = roleServices();
+    const { listUserByRole } = userServices();
+
+    const getUsersRole = async (id_role) => {
+      try {
+        const usersRole = await listUserByRole(id_role);
+        log(usersRole);
+      } catch (error) {
+        $q.notify({
+          type: "negative",
+          message: `Erro: ${error}`,
+        });
+      }
+    };
 
     const getRoles = async () => {
       try {
         const listRoles = await listAll();
-        listRoles.forEach((element, i) => {
-          console.log(element);
+        dbRoles.value = listRoles;
+        console.log(dbRoles.value[0].name);
+
+        listRoles.forEach((element) => {
           roles.value.push(element.name);
         });
       } catch (error) {
@@ -99,7 +116,7 @@ export default {
 
     onMounted(async () => {
       getRoles();
-      const listRoles = await listAll();
+
       getRolesPermissions();
       const lista = await listRolesPermissions();
       let novaLista = [];
@@ -129,6 +146,7 @@ export default {
       model: ref(null),
       roles,
       options,
+      dbRoles,
       ticked: ref(null),
       expanded: ref(null),
       teal: ref(true),
@@ -140,12 +158,14 @@ export default {
       check3: ref(false),
       functionality,
       rolesPermissions,
-      listAll,
 
+      listAll,
+      listUserByRole,
       agruparFuncionalidade,
       listRolesPermissions,
       getRolesPermissions,
       getRoles,
+      getUsersRole,
 
       seleciona(target) {
         console.log(target);

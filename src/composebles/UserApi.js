@@ -18,6 +18,14 @@ export default function useApi(url) {
       throw new Error(error);
     }
   };
+  const listUserByRole = async (id_role) => {
+    try {
+      const { data } = await api.get(`${url}/role/${id_role}`);
+      return data.res;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
 
   const add = async (id, form) => {
     try {
@@ -47,5 +55,6 @@ export default function useApi(url) {
     add,
     remove,
     listById,
+    listUserByRole,
   };
 }
