@@ -8,6 +8,7 @@
         label="Grupo de Acesso:"
         use-input
         hide-selected
+        @select="findUsers"
         fill-input
         input-debounce="0"
         :options="optionsRole"
@@ -171,6 +172,10 @@ export default {
       }
     };
 
+    const findUsers = () => {
+      console.log("ops");
+    };
+
     const agruparFuncionalidade = (objtoArray, prop) => {
       return objtoArray.reduce((acc, obj) => {
         let key = obj[prop];
@@ -230,6 +235,7 @@ export default {
       listAll,
       listAllUsers,
       listUserByRole,
+      findUsers,
       agruparFuncionalidade,
       listRolesPermissions,
       getRolesPermissions,
