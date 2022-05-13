@@ -4,14 +4,14 @@
       <q-select
         outlined
         clearable
-        v-model="model"
+        v-model="modelRole"
         label="Grupo de Acesso:"
         use-input
         hide-selected
         fill-input
         input-debounce="0"
-        :options="options"
-        @filter="filterFn"
+        :options="optionsRole"
+        @filter="filterRoles"
         style="width: 480px"
       >
         <template v-slot:no-option>
@@ -37,9 +37,57 @@
     <div class="col-12 col-sm-6 q-pa-md shadow-9">
       <div class="text-h6 color text-secondary">Usuários</div>
       <div>
-        <div v-for="tick in ticked" :key="`ticked-${tick}`">
-          {{ tick }}
+        <div class="flex items-center">
+          <q-select
+            outlined
+            clearable
+            v-model="modelUser"
+            label="Adicionar:"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="0"
+            :options="optionsUser"
+            @filter="filterUsers"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">Sem resultado</q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <div>
+            <q-btn
+              size="md"
+              dense
+              round
+              color="secondary"
+              icon="add"
+              class="q-ml-md"
+            />
+          </div>
         </div>
+        <q-separator spaced />
+
+        <q-list bordered padding separator>
+          <q-item>
+            <q-item-section>
+              <q-item-label header>Usuarios do Grupo</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item v-for="name in listUsers" :key="{ name }">
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>{{ name.name }}</q-item-section>
+            <q-item-section side>
+              <q-btn size="sm" round color="negative" icon="delete" />
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
     </div>
   </div>
@@ -55,16 +103,21 @@ export default {
   name: "RoleDetail",
   setup() {
     const $q = useQuasar();
-    const options = ref([]);
+    const optionsRole = ref([]);
     const roles = ref([]);
-    const dbRoles = ref(null);
-    const functionality = ref([]);
+    const listRoles = ref([]);
+    const optionsUser = ref([]);
+    const users = ref([]);
+    const listUsers = ref([]);
     const rolesPermissions = ref([]);
+    const functionality = ref([]);
 
     const { listRolesPermissions, listAll } = roleServices();
-    const { listUserByRole } = userServices();
+    const { listUserByRole, add } = userServices();
+    const listAllUsers = userServices().listAll;
 
     const getUsersRole = async (id_role) => {
+      console.log("Id Role: " + id_role);
       try {
         const usersRole = await listUserByRole(id_role);
         log(usersRole);
@@ -76,15 +129,30 @@ export default {
       }
     };
 
+    const getUsers = async () => {
+      try {
+        const lUsers = await listAllUsers();
+        lUsers.forEach((element) => {
+          users.value.push(element.name);
+        });
+        listUsers.value = lUsers;
+      } catch (error) {
+        $q.notify({
+          type: "negative",
+          message: `Erro: ${error}`,
+        });
+      }
+    };
+
     const getRoles = async () => {
       try {
-        const listRoles = await listAll();
-        dbRoles.value = listRoles;
-        console.log(dbRoles.value[0].name);
-
-        listRoles.forEach((element) => {
+        const lRoles = await listAll();
+        // console.log(listRoles);
+        // console.log(dbRoles.value[0].name);
+        lRoles.forEach((element) => {
           roles.value.push(element.name);
         });
+        listRoles.value = lRoles;
       } catch (error) {
         $q.notify({
           type: "negative",
@@ -116,6 +184,7 @@ export default {
 
     onMounted(async () => {
       getRoles();
+      getUsers();
 
       getRolesPermissions();
       const lista = await listRolesPermissions();
@@ -143,23 +212,23 @@ export default {
     });
 
     return {
-      model: ref(null),
-      roles,
-      options,
-      dbRoles,
+      modelRole: ref(null),
+      modelUser: ref(null),
       ticked: ref(null),
       expanded: ref(null),
-      teal: ref(true),
-      orange: ref(false),
-      red: ref(true),
-      cyan: ref(false),
-      check1: ref(true),
-      check2: ref(false),
-      check3: ref(false),
+      roles,
+      optionsRole,
+      listRoles,
+
+      users,
+      optionsUser,
+      listUsers,
+
       functionality,
       rolesPermissions,
-
+      add,
       listAll,
+      listAllUsers,
       listUserByRole,
       agruparFuncionalidade,
       listRolesPermissions,
@@ -171,10 +240,19 @@ export default {
         console.log(target);
       },
 
-      filterFn(val, update, abort) {
+      filterRoles(val, update, abort) {
         update(() => {
           const needle = val.toLowerCase();
-          options.value = roles.value.filter(
+          optionsRole.value = roles.value.filter(
+            (v) => v.toLowerCase().indexOf(needle) > -1
+          );
+        });
+      },
+
+      filterUsers(val, update, abort) {
+        update(() => {
+          const needle = val.toLowerCase();
+          optionsUser.value = users.value.filter(
             (v) => v.toLowerCase().indexOf(needle) > -1
           );
         });
