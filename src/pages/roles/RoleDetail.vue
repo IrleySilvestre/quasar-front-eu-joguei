@@ -7,9 +7,8 @@
         v-model="modelRole"
         label="Grupo de Acesso:"
         use-input
-        hide-selected
-        @select="findUsers"
         fill-input
+        hide-selected
         input-debounce="0"
         :options="optionsRole"
         @filter="filterRoles"
@@ -68,6 +67,7 @@
             />
           </div>
         </div>
+
         <q-separator spaced />
 
         <q-list bordered padding separator>
@@ -77,13 +77,13 @@
             </q-item-section>
           </q-item>
 
-          <q-item v-for="name in listUsers" :key="{ name }">
+          <q-item v-for="(user, i) in usersRole" :key="i">
             <q-item-section avatar>
               <q-avatar>
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
               </q-avatar>
             </q-item-section>
-            <q-item-section>{{ name.name }}</q-item-section>
+            <q-item-section>{{ user[i].name }}</q-item-section>
             <q-item-section side>
               <q-btn size="sm" round color="negative" icon="delete" />
             </q-item-section>
@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import { computed } from "@vue/reactivity";
 import { useQuasar } from "quasar";
 import { onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
@@ -112,16 +113,16 @@ export default {
     const listUsers = ref([]);
     const rolesPermissions = ref([]);
     const functionality = ref([]);
+    const modelRole = ref(null);
 
     const { listRolesPermissions, listAll } = roleServices();
     const { listUserByRole, add } = userServices();
     const listAllUsers = userServices().listAll;
 
     const getUsersRole = async (id_role) => {
-      console.log("Id Role: " + id_role);
       try {
-        const usersRole = await listUserByRole(id_role);
-        log(usersRole);
+        const usersWithRole = await listUserByRole(id_role);
+        return usersWithRole;
       } catch (error) {
         $q.notify({
           type: "negative",
@@ -148,8 +149,6 @@ export default {
     const getRoles = async () => {
       try {
         const lRoles = await listAll();
-        // console.log(listRoles);
-        // console.log(dbRoles.value[0].name);
         lRoles.forEach((element) => {
           roles.value.push(element.name);
         });
@@ -161,6 +160,19 @@ export default {
         });
       }
     };
+
+    const usersRole = computed(async () => {
+      if (optionsRole.value) {
+        for (const item in listRoles.value) {
+          if (modelRole.value === listRoles.value[item].name) {
+            let users = await getUsersRole(listRoles.value[item].id);
+            console.log(users);
+            return users;
+          }
+        }
+      }
+    });
+
     const getRolesPermissions = async () => {
       try {
         rolesPermissions.value = await listRolesPermissions();
@@ -170,10 +182,6 @@ export default {
           message: `Erro: ${error}`,
         });
       }
-    };
-
-    const findUsers = () => {
-      console.log("ops");
     };
 
     const agruparFuncionalidade = (objtoArray, prop) => {
@@ -186,6 +194,7 @@ export default {
         return acc;
       }, {});
     };
+    computed(() => {});
 
     onMounted(async () => {
       getRoles();
@@ -217,25 +226,24 @@ export default {
     });
 
     return {
-      modelRole: ref(null),
+      modelRole,
       modelUser: ref(null),
       ticked: ref(null),
       expanded: ref(null),
       roles,
       optionsRole,
       listRoles,
-
       users,
       optionsUser,
       listUsers,
-
       functionality,
       rolesPermissions,
+      usersRole,
+
       add,
       listAll,
       listAllUsers,
       listUserByRole,
-      findUsers,
       agruparFuncionalidade,
       listRolesPermissions,
       getRolesPermissions,
