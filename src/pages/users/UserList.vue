@@ -109,8 +109,9 @@ export default defineComponent({
     const { listAll, remove } = userServices();
 
     const getUsers = async () => {
+      const notroles = false;
       try {
-        users.value = await listAll();
+        users.value = await listAll(notroles);
       } catch (error) {
         $q.notify({
           type: "negative",

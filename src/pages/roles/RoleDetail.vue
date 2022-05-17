@@ -58,12 +58,14 @@
           </q-select>
           <div>
             <q-btn
+              :disable="isUserSelected"
               size="md"
               dense
               round
               color="secondary"
               icon="add"
               class="q-ml-md"
+              @click="addRoleUser()"
             />
           </div>
         </div>
@@ -76,18 +78,25 @@
               <q-item-label header>Usuarios do Grupo</q-item-label>
             </q-item-section>
           </q-item>
-
-          <q-item v-for="(user, i) in usersRole" :key="i">
-            <q-item-section avatar>
-              <q-avatar>
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-              </q-avatar>
-            </q-item-section>
-            <q-item-section>{{ user[i].name }}</q-item-section>
-            <q-item-section side>
-              <q-btn size="sm" round color="negative" icon="delete" />
-            </q-item-section>
-          </q-item>
+          <div v-if="usersRole">
+            <q-item v-for="(user, i) in usersRole" :key="i">
+              <q-item-section avatar>
+                <q-avatar>
+                  <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                </q-avatar>
+              </q-item-section>
+              <q-item-section>{{ user.name }}</q-item-section>
+              <q-item-section side>
+                <q-btn
+                  size="sm"
+                  round
+                  color="negative"
+                  icon="delete"
+                  @click="removeUserRole(user.id)"
+                />
+              </q-item-section>
+            </q-item>
+          </div>
         </q-list>
       </div>
     </div>
@@ -95,7 +104,6 @@
 </template>
 
 <script>
-import { computed } from "@vue/reactivity";
 import { useQuasar } from "quasar";
 import { onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
@@ -103,6 +111,20 @@ import userServices from "../../services/userServices";
 
 export default {
   name: "RoleDetail",
+
+  watch: {
+    modelRole(ant, atual) {
+      this.getUsersRole();
+      if (this.modelUser) {
+        this.isUserSelected = false;
+      }
+    },
+    modelUser(ant, atual) {
+      if (this.modelRole) {
+        this.isUserSelected = false;
+      }
+    },
+  },
   setup() {
     const $q = useQuasar();
     const optionsRole = ref([]);
@@ -110,19 +132,28 @@ export default {
     const listRoles = ref([]);
     const optionsUser = ref([]);
     const users = ref([]);
+    const modelUser = ref(null);
     const listUsers = ref([]);
     const rolesPermissions = ref([]);
     const functionality = ref([]);
     const modelRole = ref(null);
+    const usersRole = ref(null);
+    const isUserSelected = ref(true);
 
     const { listRolesPermissions, listAll } = roleServices();
-    const { listUserByRole, add } = userServices();
+    const { listUserByRole, add, listById } = userServices();
     const listAllUsers = userServices().listAll;
 
-    const getUsersRole = async (id_role) => {
+    const getUsersRole = async () => {
       try {
-        const usersWithRole = await listUserByRole(id_role);
-        return usersWithRole;
+        for (const item in listRoles.value) {
+          if (modelRole.value === listRoles.value[item].name) {
+            const usersWithRole = await listUserByRole(
+              listRoles.value[item].id
+            );
+            usersRole.value = usersWithRole;
+          }
+        }
       } catch (error) {
         $q.notify({
           type: "negative",
@@ -132,8 +163,9 @@ export default {
     };
 
     const getUsers = async () => {
+      const notroles = true;
       try {
-        const lUsers = await listAllUsers();
+        const lUsers = await listAllUsers(notroles);
         lUsers.forEach((element) => {
           users.value.push(element.name);
         });
@@ -161,18 +193,6 @@ export default {
       }
     };
 
-    const usersRole = computed(async () => {
-      if (optionsRole.value) {
-        for (const item in listRoles.value) {
-          if (modelRole.value === listRoles.value[item].name) {
-            let users = await getUsersRole(listRoles.value[item].id);
-            console.log(users);
-            return users;
-          }
-        }
-      }
-    });
-
     const getRolesPermissions = async () => {
       try {
         rolesPermissions.value = await listRolesPermissions();
@@ -194,7 +214,6 @@ export default {
         return acc;
       }, {});
     };
-    computed(() => {});
 
     onMounted(async () => {
       getRoles();
@@ -239,6 +258,7 @@ export default {
       functionality,
       rolesPermissions,
       usersRole,
+      isUserSelected,
 
       add,
       listAll,
@@ -249,6 +269,7 @@ export default {
       getRolesPermissions,
       getRoles,
       getUsersRole,
+      listById,
 
       seleciona(target) {
         console.log(target);
@@ -261,6 +282,25 @@ export default {
             (v) => v.toLowerCase().indexOf(needle) > -1
           );
         });
+      },
+
+      async removeUserRole(id) {
+        try {
+          const user = await listById(id);
+          user[0].id_role = null;
+          await add(id, user[0]);
+          getUsersRole();
+          getUsers();
+        } catch (error) {
+          $q.notify({
+            type: "negative",
+            message: `Erro: ${error}`,
+          });
+        }
+      },
+
+      addRoleUser() {
+        console.log(modelUser.value);
       },
 
       filterUsers(val, update, abort) {

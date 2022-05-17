@@ -1,12 +1,21 @@
 import { api } from "src/boot/axios";
 
 export default function useApi(url) {
-  const listAll = async () => {
-    try {
-      const { data } = await api.get(url);
-      return data.res;
-    } catch (error) {
-      throw new Error(error);
+  const listAll = async (notrole) => {
+    if (notrole) {
+      try {
+        const { data } = await api.get(`${url}/usernotroles/${notrole}`);
+        return data.res;
+      } catch (error) {
+        throw new Error(error);
+      }
+    } else {
+      try {
+        const { data } = await api.get(url);
+        return data.res;
+      } catch (error) {
+        throw new Error(error);
+      }
     }
   };
 
@@ -41,6 +50,7 @@ export default function useApi(url) {
       throw new Error(message);
     }
   };
+
   const remove = async (id) => {
     try {
       const { data } = await api.delete(`${url}/${id}`);
