@@ -105,7 +105,7 @@
 
 <script>
 import { useQuasar } from "quasar";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
 import userServices from "../../services/userServices";
 
@@ -115,14 +115,6 @@ export default {
   watch: {
     modelRole(ant, atual) {
       this.getUsersRole();
-      if (this.modelUser) {
-        this.isUserSelected = false;
-      }
-    },
-    modelUser(ant, atual) {
-      if (this.modelRole) {
-        this.isUserSelected = false;
-      }
     },
   },
   setup() {
@@ -138,10 +130,16 @@ export default {
     const functionality = ref([]);
     const modelRole = ref(null);
     const usersRole = ref(null);
-    const isUserSelected = ref(true);
+    const isUserSelected = computed(() => {
+      if (modelRole.value && modelUser.value) {
+        return false;
+      } else return true;
+    });
 
     const { listRolesPermissions, listAll } = roleServices();
-    const { listUserByRole, add, listById } = userServices();
+    const { listUserByRole } = userServices();
+    const addUser = userServices().add;
+    const listUserById = userServices().listById;
     const listAllUsers = userServices().listAll;
 
     const getUsersRole = async () => {
@@ -246,7 +244,7 @@ export default {
 
     return {
       modelRole,
-      modelUser: ref(null),
+      modelUser,
       ticked: ref(null),
       expanded: ref(null),
       roles,
@@ -260,7 +258,7 @@ export default {
       usersRole,
       isUserSelected,
 
-      add,
+      addUser,
       listAll,
       listAllUsers,
       listUserByRole,
@@ -269,7 +267,7 @@ export default {
       getRolesPermissions,
       getRoles,
       getUsersRole,
-      listById,
+      listUserById,
 
       seleciona(target) {
         console.log(target);
@@ -286,9 +284,11 @@ export default {
 
       async removeUserRole(id) {
         try {
-          const user = await listById(id);
+          const user = await listUserById(id);
           user[0].id_role = null;
-          await add(id, user[0]);
+          await addUser(id, user[0]);
+          optionsUser.value = [];
+          users.value = [];
           getUsersRole();
           getUsers();
         } catch (error) {
@@ -299,8 +299,34 @@ export default {
         }
       },
 
-      addRoleUser() {
-        console.log(modelUser.value);
+      async addRoleUser() {
+        const idUser = listUsers.value.find((elem) => {
+          if (elem.name === this.modelUser) {
+            return elem.id;
+          }
+        });
+        const idRole = listRoles.value.find((elem) => {
+          if (elem.name === this.modelRole) {
+            return elem.id;
+          }
+        });
+
+        try {
+          const user = await listUserById(idUser.id);
+
+          user[0].id_role = idRole.id;
+          await addUser(idUser.id, user[0]);
+          this.modelUser = null;
+          optionsUser.value = [];
+          users.value = [];
+          getUsersRole();
+          getUsers();
+        } catch (error) {
+          $q.notify({
+            type: "negative",
+            message: `Erro: ${error}`,
+          });
+        }
       },
 
       filterUsers(val, update, abort) {

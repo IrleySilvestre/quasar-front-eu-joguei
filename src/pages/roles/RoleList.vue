@@ -59,7 +59,10 @@
               round
               color="info"
               icon="loupe"
-              @click="detailRole(props.row.id)"
+              :to="{
+                name: 'admPage',
+                params: { tabActive: 'permissions' },
+              }"
             />
           </div>
 
@@ -121,16 +124,9 @@ export default defineComponent({
       }
     };
 
-    const detailRole = async (id) => {
-      try {
-        router.push({ name: "roleDetail", params: { id } });
-      } catch (error) {
-        $q.notify({
-          type: "negative",
-          message: "Erro ao detalhar",
-        });
-      }
-    };
+    // const detailRole = (id) => {
+    //   router.push({ name: "admPage", params: { tabActive: "permission" } });
+    // };
 
     const editRole = (id) => {
       router.push({ name: "roleEdit", params: { id } });
@@ -187,7 +183,7 @@ export default defineComponent({
       editRole,
       removeRole,
       getRoles,
-      detailRole,
+      // detailRole,
     };
   },
 });

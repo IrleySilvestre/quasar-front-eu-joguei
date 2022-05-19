@@ -43,7 +43,7 @@ const routes = [
         component: () => import("src/pages/users/UserAdd.vue"),
       },
       {
-        path: "edmin-page/:tabActive?",
+        path: "edmin-page/:tabActive?:id?",
         name: "admPage",
         component: () => import("src/pages/admin/AdmPage.vue"),
       },
@@ -52,11 +52,11 @@ const routes = [
         name: "roleAdd",
         component: () => import("src/pages/roles/RoleAdd.vue"),
       },
-      {
-        path: "role-detail/:id",
-        name: "roleDetail",
-        component: () => import("src/pages/roles/RoleDetail.vue"),
-      },
+      // {
+      //   path: "role-detail/:id",
+      //   name: "roleDetail",
+      //   component: () => import("src/pages/roles/RoleDetail.vue"),
+      // },
       {
         path: "role-edit/:id",
         name: "roleEdit",
