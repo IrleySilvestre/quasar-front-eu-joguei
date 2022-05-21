@@ -29,7 +29,7 @@
         </q-tab-panel>
 
         <q-tab-panel name="roles">
-          <RoleList />
+          <RoleList @detailRole="detailRole" />
         </q-tab-panel>
       </q-tab-panels>
     </div>
@@ -51,6 +51,7 @@ export default {
   setup() {
     const route = useRoute();
     const tab = ref("user");
+    const currentRole = ref(null);
 
     onMounted(() => {
       if (route.params.tabActive) {
@@ -61,6 +62,12 @@ export default {
     return {
       tab,
       route,
+      currentRole,
+
+      detailRole(n, id) {
+        tab.value = n;
+        currentRole.value = id;
+      },
     };
   },
 };

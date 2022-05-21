@@ -59,10 +59,7 @@
               round
               color="info"
               icon="loupe"
-              :to="{
-                name: 'admPage',
-                params: { tabActive: 'permissions' },
-              }"
+              @click="$emit('detailRole', 'permissions')"
             />
           </div>
 
@@ -123,10 +120,6 @@ export default defineComponent({
         });
       }
     };
-
-    // const detailRole = (id) => {
-    //   router.push({ name: "admPage", params: { tabActive: "permission" } });
-    // };
 
     const editRole = (id) => {
       router.push({ name: "roleEdit", params: { id } });
