@@ -42,12 +42,21 @@ export default function useApi(url) {
     }
   };
 
-  const listRolesPermissions = async () => {
-    try {
-      const { data } = await api.get(`${url}/permissions`);
-      return data.res;
-    } catch (error) {
-      throw new Error(error);
+  const listRolesPermissions = async (id) => {
+    if (!id) {
+      try {
+        const { data } = await api.get(`${url}/permissions`);
+        return data.res;
+      } catch (error) {
+        throw new Error(error);
+      }
+    } else {
+      try {
+        const { data } = await api.get(`${url}/permissions/${id}`);
+        return data.res;
+      } catch (error) {
+        throw new Error(error);
+      }
     }
   };
 

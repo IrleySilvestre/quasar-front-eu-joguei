@@ -27,10 +27,8 @@
       <q-tree
         :nodes="functionality"
         v-model:ticked="ticked"
-        v-model:expanded="expanded"
         node-key="label"
         tick-strategy="leaf"
-        @update:ticked="seleciona"
       />
     </div>
 
@@ -42,6 +40,8 @@
             outlined
             clearable
             v-model="modelUser"
+            tick-strategy="leaf"
+            :ticked="ticked"
             label="Adicionar:"
             use-input
             hide-selected
@@ -100,12 +100,13 @@
         </q-list>
       </div>
     </div>
+    {{ key }}
   </div>
 </template>
 
 <script>
 import { useQuasar } from "quasar";
-import { computed, onMounted, onUpdated, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import roleServices from "../../services/roleServices";
 import userServices from "../../services/userServices";
 
@@ -113,20 +114,64 @@ export default {
   name: "RoleDetail",
 
   watch: {
-    modelRole(ant, atual) {
+    async modelRole(ant, atual) {
       this.getUsersRole();
+
+      if (!ant) {
+        this.functionality = [];
+        this.usersRole = [];
+      } else {
+        var idRole = "";
+        this.listRoles.forEach((elem) => {
+          if (elem.name == ant) {
+            idRole = elem.id;
+          }
+        });
+        const lista = await this.listRolesPermissions(idRole);
+
+        let novaLista = [];
+
+        let func = this.agruparFuncionalidade(lista, "funcionalidade");
+
+        let arrayFunc = Object.entries(func);
+
+        arrayFunc.forEach((elem) => {
+          let item = { id: 0, label: "", children: [] };
+          elem[1].forEach((el, key) => {
+            if (item.id != el.idFuncionalidade) {
+              item.label = el.idFuncionalidade + " " + el.funcionalidade;
+            }
+            item.children[key] = {
+              label: `${el.idFuncionalidade} ${el.idAcao} ${el.acao}`,
+            };
+            if (el.permissao === 1) {
+              this.ticked.push(
+                `${el.idFuncionalidade} ${el.idAcao} ${el.acao}`
+              );
+            }
+          });
+
+          novaLista.push(item);
+        });
+
+        this.functionality = novaLista;
+      }
+    },
+
+    ticked(modificado, backup) {
+      this.updatePermissions(modificado, backup);
     },
   },
   setup() {
     const $q = useQuasar();
     const optionsRole = ref([]);
+    const ticked = ref([]);
     const roles = ref([]);
     const listRoles = ref([]);
     const optionsUser = ref([]);
     const users = ref([]);
     const modelUser = ref(null);
     const listUsers = ref([]);
-    const rolesPermissions = ref([]);
     const functionality = ref([]);
     const modelRole = ref(null);
     const usersRole = ref(null);
@@ -191,17 +236,6 @@ export default {
       }
     };
 
-    const getRolesPermissions = async () => {
-      try {
-        rolesPermissions.value = await listRolesPermissions();
-      } catch (error) {
-        $q.notify({
-          type: "negative",
-          message: `Erro: ${error}`,
-        });
-      }
-    };
-
     const agruparFuncionalidade = (objtoArray, prop) => {
       return objtoArray.reduce((acc, obj) => {
         let key = obj[prop];
@@ -213,40 +247,47 @@ export default {
       }, {});
     };
 
+    const updatePermissions = (modificado, backup) => {
+      const filter1 = modificado.filter((elem) => {
+        if (backup.indexOf(elem) == -1) {
+          return elem;
+        }
+      });
+      const filter2 = backup.filter((elem) => {
+        if (modificado.indexOf(elem) == -1) {
+          return elem;
+        }
+      });
+      const toUpdate = filter1.concat(filter2);
+      for (let i = 0; i < toUpdate.length; i++) {
+        toUpdate[i] = toUpdate[i].split(" ").join("");
+      }
+
+      var roleId = "";
+      listRoles.value.forEach((elem) => {
+        if (elem.name == modelRole.value) {
+          roleId = elem.id;
+        }
+      });
+
+      if (modificado > backup) {
+        console.log(roleId);
+        console.log("setar true", toUpdate);
+      } else {
+        console.log(roleId);
+        console.log("setar false", toUpdate);
+      }
+    };
+
     onMounted(async () => {
       getRoles();
       getUsers();
-
-      getRolesPermissions();
-      const lista = await listRolesPermissions();
-      let novaLista = [];
-      let numList = 0;
-
-      let func = agruparFuncionalidade(lista, "funcionalidade");
-
-      for (const key in func) {
-        numList = numList + 1;
-        if (Object.hasOwnProperty.call(func, key)) {
-          let nameLabel = numList + " " + key;
-
-          let item = { label: nameLabel, children: [] };
-          const element = func[key];
-          element.forEach((el, i) => {
-            let nameChildren = numList + "." + (i + 1) + " " + el.acao;
-            item.children[i] = { label: nameChildren, permissao: el.permissao };
-          });
-          novaLista.push(item);
-        }
-      }
-
-      functionality.value = novaLista;
     });
 
     return {
       modelRole,
       modelUser,
-      ticked: ref(null),
-      expanded: ref(null),
+      ticked,
       roles,
       optionsRole,
       listRoles,
@@ -254,7 +295,6 @@ export default {
       optionsUser,
       listUsers,
       functionality,
-      rolesPermissions,
       usersRole,
       isUserSelected,
 
@@ -264,14 +304,10 @@ export default {
       listUserByRole,
       agruparFuncionalidade,
       listRolesPermissions,
-      getRolesPermissions,
       getRoles,
       getUsersRole,
       listUserById,
-
-      seleciona(target) {
-        console.log(target);
-      },
+      updatePermissions,
 
       filterRoles(val, update, abort) {
         update(() => {
