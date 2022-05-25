@@ -100,7 +100,6 @@
         </q-list>
       </div>
     </div>
-    {{ key }}
   </div>
 </template>
 
@@ -120,41 +119,9 @@ export default {
       if (!ant) {
         this.functionality = [];
         this.usersRole = [];
+        this.ticked = [];
       } else {
-        var idRole = "";
-        this.listRoles.forEach((elem) => {
-          if (elem.name == ant) {
-            idRole = elem.id;
-          }
-        });
-        const lista = await this.listRolesPermissions(idRole);
-
-        let novaLista = [];
-
-        let func = this.agruparFuncionalidade(lista, "funcionalidade");
-
-        let arrayFunc = Object.entries(func);
-
-        arrayFunc.forEach((elem) => {
-          let item = { id: 0, label: "", children: [] };
-          elem[1].forEach((el, key) => {
-            if (item.id != el.idFuncionalidade) {
-              item.label = el.idFuncionalidade + " " + el.funcionalidade;
-            }
-            item.children[key] = {
-              label: `${el.idFuncionalidade} ${el.idAcao} ${el.acao}`,
-            };
-            if (el.permissao === 1) {
-              this.ticked.push(
-                `${el.idFuncionalidade} ${el.idAcao} ${el.acao}`
-              );
-            }
-          });
-
-          novaLista.push(item);
-        });
-
-        this.functionality = novaLista;
+        this.loadListPermissions();
       }
     },
 
@@ -181,7 +148,8 @@ export default {
       } else return true;
     });
 
-    const { listRolesPermissions, listAll } = roleServices();
+    const { listRolesPermissions, listAll, updateRolesPermissions } =
+      roleServices();
     const { listUserByRole } = userServices();
     const addUser = userServices().add;
     const listUserById = userServices().listById;
@@ -236,6 +204,40 @@ export default {
       }
     };
 
+    const loadListPermissions = async () => {
+      var idRole = "";
+      listRoles.value.forEach((elem) => {
+        if (elem.name == modelRole.value) {
+          idRole = elem.id;
+        }
+      });
+      const lista = await listRolesPermissions(idRole);
+
+      let novaLista = [];
+
+      let func = agruparFuncionalidade(lista, "funcionalidade");
+
+      let arrayFunc = Object.entries(func);
+
+      arrayFunc.forEach((elem) => {
+        let item = { id: 0, label: "", children: [] };
+        elem[1].forEach((el, key) => {
+          if (item.id != el.idFuncionalidade) {
+            item.label = el.idFuncionalidade + " " + el.funcionalidade;
+          }
+          item.children[key] = {
+            label: `${el.idFuncionalidade} ${el.idAcao} ${el.acao}`,
+          };
+          if (el.permissao === 1) {
+            ticked.value.push(`${el.idFuncionalidade} ${el.idAcao} ${el.acao}`);
+          }
+        });
+        novaLista.push(item);
+      });
+
+      functionality.value = novaLista;
+    };
+
     const agruparFuncionalidade = (objtoArray, prop) => {
       return objtoArray.reduce((acc, obj) => {
         let key = obj[prop];
@@ -247,7 +249,7 @@ export default {
       }, {});
     };
 
-    const updatePermissions = (modificado, backup) => {
+    const updatePermissions = async (modificado, backup) => {
       const filter1 = modificado.filter((elem) => {
         if (backup.indexOf(elem) == -1) {
           return elem;
@@ -271,11 +273,15 @@ export default {
       });
 
       if (modificado > backup) {
-        console.log(roleId);
-        console.log("setar true", toUpdate);
+        for (let index = 0; index < toUpdate.length; index++) {
+          const ids = toUpdate[index];
+          await updateRolesPermissions(1, roleId, ids[1], ids[0]);
+        }
       } else {
-        console.log(roleId);
-        console.log("setar false", toUpdate);
+        for (let index = 0; index < toUpdate.length; index++) {
+          const ids = toUpdate[index];
+          await updateRolesPermissions(0, roleId, ids[1], ids[0]);
+        }
       }
     };
 
@@ -304,6 +310,8 @@ export default {
       listUserByRole,
       agruparFuncionalidade,
       listRolesPermissions,
+      loadListPermissions,
+      updateRolesPermissions,
       getRoles,
       getUsersRole,
       listUserById,

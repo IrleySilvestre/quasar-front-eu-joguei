@@ -59,6 +59,21 @@ export default function useApi(url) {
       }
     }
   };
+  const updateRolesPermissions = async (
+    permition,
+    idRole,
+    idAction,
+    idFunctionality
+  ) => {
+    try {
+      const { data } = await api.put(
+        `${url}/permissions/?permition=${permition}&idRole=${idRole}&idAction=${idAction}&idFunctionality=${idFunctionality}`
+      );
+      return data.res;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
 
   return {
     listAll,
@@ -66,5 +81,6 @@ export default function useApi(url) {
     remove,
     findById,
     listRolesPermissions,
+    updateRolesPermissions,
   };
 }
