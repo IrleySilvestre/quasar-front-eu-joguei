@@ -3,18 +3,29 @@
     <q-header elevated>
       <q-toolbar class="bg-secondary">
         <q-btn
-          v-if="!drawerRight"
+          v-if="!drawerLeft"
           flat
-          @click="drawerRight = !drawerRight"
+          @click="drawerLeft = !drawerLeft"
           round
           dense
           icon="menu"
-        />
+        >
+          <q-tooltip>Menu</q-tooltip>
+        </q-btn>
+
+        <q-space />
+
+        <q-btn round flat @click="drawerRight = !drawerRight">
+          <q-avatar size="26px">
+            <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+          </q-avatar>
+          <q-tooltip>Account</q-tooltip>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-model="drawerRight"
+      v-model="drawerLeft"
       :mini="miniState"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
@@ -24,11 +35,12 @@
       class="bg-secondary text-teal-1 text-bold"
     >
       <q-list>
-        <q-item clickable @click="drawerRight = !drawerRight" exact>
+        <q-item clickable @click="drawerLeft = !drawerLeft" exact>
           <q-item-section avatar>
             <q-icon name="menu" />
           </q-item-section>
         </q-item>
+
         <q-separator />
         <MainMenu v-for="link in menuLinks" :key="link.title" v-bind="link" />
         <q-separator />
@@ -43,6 +55,26 @@
           </q-item-section>
         </q-item>
       </q-list>
+    </q-drawer>
+
+    <q-drawer v-model="drawerRight" side="right" overlay elevated>
+      <!-- drawer content -->
+      <q-card class="my-card" flat bordered>
+        <q-item>
+          <q-item-section avatar>
+            <q-avatar>
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            </q-avatar>
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Irley Jose Silvestre</q-item-label>
+            <q-item-label caption> irleysilvestre.mba@gmail.com </q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator />
+      </q-card>
     </q-drawer>
 
     <q-page-container>
@@ -82,10 +114,12 @@ export default defineComponent({
   },
 
   setup() {
+    const drawerLeft = ref(true);
     const drawerRight = ref(true);
 
     return {
       menuLinks: MenuList,
+      drawerLeft,
       drawerRight,
       miniState: ref(true),
     };
