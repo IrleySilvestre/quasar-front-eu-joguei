@@ -15,10 +15,8 @@
 
         <q-space />
 
-        <q-btn round flat @click="drawerRight = !drawerRight">
-          <q-avatar size="26px">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
-          </q-avatar>
+        <q-btn round flat @click="drawerRight = !drawerRight" class="q-mr-lg">
+          <q-icon name="account_circle" size="2rem" />
           <q-tooltip>Account</q-tooltip>
         </q-btn>
       </q-toolbar>
@@ -43,23 +41,12 @@
 
         <q-separator />
         <MainMenu v-for="link in menuLinks" :key="link.title" v-bind="link" />
-        <q-separator />
-
-        <q-item clickable :to="{ name: 'signin' }" exact>
-          <q-item-section avatar>
-            <q-icon name="logout" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Sair</q-item-label>
-            <q-item-label caption>Encerrar</q-item-label>
-          </q-item-section>
-        </q-item>
       </q-list>
     </q-drawer>
 
-    <q-drawer v-model="drawerRight" side="right" overlay elevated>
+    <q-drawer v-model="drawerRight" side="right">
       <!-- drawer content -->
-      <q-card class="my-card" flat bordered>
+      <q-card class="my-card bg-secondary text-teal-1 text-bold" bordered>
         <q-item>
           <q-item-section avatar>
             <q-avatar>
@@ -69,11 +56,25 @@
 
           <q-item-section>
             <q-item-label>Irley Jose Silvestre</q-item-label>
-            <q-item-label caption> irleysilvestre.mba@gmail.com </q-item-label>
+            <q-item-label class="text-teal-1 text-bold" caption>
+              irleysilvestre.mba@gmail.com
+            </q-item-label>
           </q-item-section>
         </q-item>
 
         <q-separator />
+
+        <q-item clickable :to="{ name: 'signin' }" exact>
+          <q-item-section class="text-right">
+            <!-- <q-item-label caption>Encerrar</q-item-label> -->
+            <q-item-label caption class="text-teal-1 text-bold"
+              >Sair</q-item-label
+            >
+          </q-item-section>
+          <q-item-section avatar class="q-mr-lg">
+            <q-icon name="logout" />
+          </q-item-section>
+        </q-item>
       </q-card>
     </q-drawer>
 
